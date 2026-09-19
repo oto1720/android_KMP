@@ -1,14 +1,19 @@
 package org.example.project
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -65,6 +70,27 @@ fun App() {
             }
 
             Spacer(Modifier.height(16.dp))
+
+            // Step 1-3: メモ一覧（カードをタップで削除）
+            if (memos.isEmpty()) {
+                Text("まだメモがありません", style = MaterialTheme.typography.bodyMedium)
+            }
+
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(memos, key = { it.id }) { memo ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .clickable { memos = memos - memo }
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(memo.text)
+                            Text(memo.createdAt, style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                }
+            }
 
             Text(
                 "Running on: ${getPlatform().name}",
