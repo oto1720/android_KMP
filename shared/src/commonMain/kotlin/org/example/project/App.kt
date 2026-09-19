@@ -29,9 +29,15 @@ fun App() {
     MaterialTheme {
         // Step 1-2: 画面の状態。remember + mutableStateOf は Flutter の setState に近い。
         var input by remember { mutableStateOf("") }
+        // Step 1-4: 検索キーワード。
+        var query by remember { mutableStateOf("") }
         var memos by remember { mutableStateOf(listOf<Memo>()) }
         // nextId は memos.size ではなく別で持つ（削除後に id が重複するのを防ぐ）。
         var nextId by remember { mutableStateOf(0L) }
+
+        // Step 1-4: 元データ(memos)はそのまま持ち、表示用(visibleMemos)を別に組み立てる。
+        val visibleMemos = memos
+            .filter { query.isBlank() || it.text.contains(query, ignoreCase = true) }
 
         Column(
             modifier = Modifier
@@ -71,13 +77,27 @@ fun App() {
 
             Spacer(Modifier.height(16.dp))
 
+            // Step 1-4: 検索欄。ここに打つと visibleMemos が絞り込まれる。
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("🔍 検索") },
+                singleLine = true
+            )
+
+            Spacer(Modifier.height(16.dp))
+
             // Step 1-3: メモ一覧（カードをタップで削除）
-            if (memos.isEmpty()) {
-                Text("まだメモがありません", style = MaterialTheme.typography.bodyMedium)
+            if (visibleMemos.isEmpty()) {
+                Text(
+                    if (memos.isEmpty()) "まだメモがありません" else "一致するメモがありません",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
 
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(memos, key = { it.id }) { memo ->
+                items(visibleMemos, key = { it.id }) { memo ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
