@@ -15,6 +15,13 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
 
+    // この構成では shared が UI(Compose) を公開しないので、
+    // Android の UI 依存は androidApp 側で自前で持つ。
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.ui)
+
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)
 }

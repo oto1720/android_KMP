@@ -1,29 +1,18 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
+    // この構成では Web の UI を Compose ではなくブラウザの DOM で直接書く。
+    // 素直な Kotlin/JS + DOM 構成にするため js ターゲットのみにする。
     js {
         browser()
         binaries.executable()
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
-
     sourceSets {
-        commonMain.dependencies {
+        jsMain.dependencies {
             implementation(project(":shared"))
-
-            implementation(libs.compose.ui)
-            implementation(libs.compose.components.resources)
         }
     }
 }
