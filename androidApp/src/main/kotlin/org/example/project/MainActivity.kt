@@ -12,9 +12,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        // Step 2-4: SharedPreferences 用に Context を shared 側へ渡す（Android だけ必要な一手間）。
-        androidContext = applicationContext
-
         setContent {
             App()
         }
