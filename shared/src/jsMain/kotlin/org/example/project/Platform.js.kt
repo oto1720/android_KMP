@@ -12,3 +12,6 @@ class JsPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = JsPlatform()
+
+// このプロジェクトには wasmJs に加えて js ターゲットもあるので、こちらにも actual が必要。
+actual fun nowFormatted(): String = js("new Date().toTimeString().slice(0,5)")
