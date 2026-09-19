@@ -38,6 +38,10 @@ fun App() {
         // Step 1-4: 元データ(memos)はそのまま持ち、表示用(visibleMemos)を別に組み立てる。
         val visibleMemos = memos
             .filter { query.isBlank() || it.text.contains(query, ignoreCase = true) }
+            .sortedWith(
+                compareByDescending<Memo> { it.favorite }
+                    .thenByDescending { it.id }
+            )
 
         Column(
             modifier = Modifier
@@ -45,7 +49,15 @@ fun App() {
                 .safeContentPadding()
                 .padding(16.dp)
         ) {
-            Text("KMPメモ帳", style = MaterialTheme.typography.headlineSmall)
+            // Step 1-5: タイトルの右に件数を出す。
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("KMPメモ帳", style = MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.weight(1f))
+                Text("${memos.size}件", style = MaterialTheme.typography.labelMedium)
+            }
 
             Spacer(Modifier.height(16.dp))
 
@@ -102,11 +114,30 @@ fun App() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
-                            .clickable { memos = memos - memo }
                     ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(memo.text)
-                            Text(memo.createdAt, style = MaterialTheme.typography.labelSmall)
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clickable { memos = memos - memo }
+                            ) {
+                                Text(memo.text)
+                                Text(memo.createdAt, style = MaterialTheme.typography.labelSmall)
+                            }
+                            Text(
+                                text = if (memo.favorite) "★" else "☆",
+                                modifier = Modifier
+                                    .clickable {
+                                        memos = memos.map {
+                                            if (it.id == memo.id) it.copy(favorite = !it.favorite)
+                                            else it
+                                        }
+                                    }
+                                    .padding(start = 8.dp)
+                            )
                         }
                     }
                 }
