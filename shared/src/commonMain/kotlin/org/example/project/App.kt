@@ -31,9 +31,18 @@ fun App() {
         var input by remember { mutableStateOf("") }
         // Step 1-4: 検索キーワード。
         var query by remember { mutableStateOf("") }
-        var memos by remember { mutableStateOf(listOf<Memo>()) }
+        // Step 2-5: 起動時に保存済みのメモを読み込む（永続化）。
+        //   loadMemos() で保存済みの文字列を取り出し、decodeMemos() で List<Memo> に戻す。
+        var memos by remember { mutableStateOf(decodeMemos(loadMemos())) }
         // nextId は memos.size ではなく別で持つ（削除後に id が重複するのを防ぐ）。
-        var nextId by remember { mutableStateOf(0L) }
+        //   Step 2-5: 復元したメモの「最大 id + 1」から採番する（再起動後の id 衝突を防ぐ）。
+        var nextId by remember { mutableStateOf((memos.maxOfOrNull { it.id } ?: -1L) + 1L) }
+
+        // Step 2-5: memos が変わるたびに自動保存する。
+        //   保存処理を 1 箇所にまとめることで「保存し忘れ」が起きない。
+        LaunchedEffect(memos) {
+            saveMemos(encodeMemos(memos))
+        }
 
         // Step 1-4: 元データ(memos)はそのまま持ち、表示用(visibleMemos)を別に組み立てる。
         val visibleMemos = memos
