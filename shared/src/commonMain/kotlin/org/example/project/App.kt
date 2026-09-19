@@ -76,7 +76,7 @@ fun App() {
                             memos = memos + Memo(
                                 id = nextId,
                                 text = input.trim(),
-                                createdAt = ""
+                                createdAt = nowFormatted()
                             )
                             nextId++
                             input = ""
