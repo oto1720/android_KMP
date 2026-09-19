@@ -22,7 +22,11 @@ import androidx.compose.ui.unit.dp
 @Preview
 fun App() {
     MaterialTheme {
+        // Step 1-2: 画面の状態。remember + mutableStateOf は Flutter の setState に近い。
         var input by remember { mutableStateOf("") }
+        var memos by remember { mutableStateOf(listOf<Memo>()) }
+        // nextId は memos.size ではなく別で持つ（削除後に id が重複するのを防ぐ）。
+        var nextId by remember { mutableStateOf(0L) }
 
         Column(
             modifier = Modifier
@@ -45,7 +49,15 @@ fun App() {
                 Spacer(Modifier.width(8.dp))
                 Button(
                     onClick = {
-                        input = ""
+                        if (input.isNotBlank()) {
+                            memos = memos + Memo(
+                                id = nextId,
+                                text = input.trim(),
+                                createdAt = ""
+                            )
+                            nextId++
+                            input = ""
+                        }
                     }
                 ) {
                     Text("追加")
