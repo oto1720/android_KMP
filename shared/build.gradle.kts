@@ -26,19 +26,20 @@ kotlin {
         browser()
     }
 
-    android {
-       namespace = "org.example.project.shared"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
+    androidLibrary {
+        namespace = "org.example.project.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
 
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       withDeviceTestBuilder {
-           sourceSetTreeName = "test"
-       }.configure {
-           instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-       }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
+
+        withDeviceTestBuilder {
+            sourceSetTreeName = "test"
+        }.configure {
+            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
     }
 
     sourceSets {
@@ -47,6 +48,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
         jsMain.dependencies {
             // Platform.js.kt が web.navigator を使うため。
             implementation(libs.wrappers.browser)
