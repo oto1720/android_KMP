@@ -1,5 +1,80 @@
 This is a Kotlin Multiplatform project targeting Android, iOS, Web.
 
+---
+
+## 🌿 ブランチ構成（ハンズオン用）
+
+このリポジトリは、KMP講座で使いやすいように「作業用ブランチ」と「答えブランチ」を分けています。
+詳しい運用ルールと Step ごとの実装手順は、`handson/start` ブランチの `docs/ブランチ運用.md` / `docs/ハンズオン手順書.md` にまとまっています。
+
+| ブランチ | 用途 |
+| --- | --- |
+| `handson/start` | **受講者が最初に使う**開始ブランチ。最小限の画面だけが入っており、Step 1-1 から順に実装していく |
+| `answer/step-1-1-memo` 〜 `answer/step-2-5-autosave` | 各 Step の**完了状態（答え合わせ用）**。詰まったときに該当 Step を見る |
+| `answer/final` | KMPメモ帳の**完成版**（デモ・答え合わせ・復旧用） |
+
+```bash
+# 最初に開始ブランチへ
+git switch handson/start
+
+# 特定 Step の答えを見る（例: Step 1-4）
+git switch answer/step-1-4-search
+
+# 完成版を見る
+git switch answer/final
+```
+
+作業途中で答えブランチへ移動できない場合は、いったん退避します（`-u` で未追跡ファイルも退避）。
+
+```bash
+git stash -u
+git switch answer/step-1-4-search
+# 戻るとき
+git switch handson/start
+git stash pop
+```
+
+> ⚠️ `git stash -u` や `git clean` は未追跡ファイル（コミットしていない新規ファイル）も退避・削除します。
+> 残したいメモや解説ファイルは、退避前にコミットするか別の場所に置いてください。
+
+---
+
+## 🛠 ビルド & 実行（クイックスタート）
+
+前提: JDK 17+ / Android Studio（or IntelliJ）/ iOS は Xcode が必要。すべて `./gradlew`（Windows は `gradlew.bat`）から実行します。
+
+```bash
+# 依存の取得とビルド確認（全ターゲットのコンパイル）
+./gradlew build
+
+# ── Android ───────────────────────────────
+./gradlew :androidApp:assembleDebug          # APK をビルド
+./gradlew :androidApp:installDebug           # 接続中の端末/エミュレータへインストール
+
+# ── Web ───────────────────────────────────
+./gradlew :webApp:wasmJsBrowserDevelopmentRun   # Wasm 版（高速・モダンブラウザ）
+./gradlew :webApp:jsBrowserDevelopmentRun       # JS 版（低速・古いブラウザ対応）
+#   → 起動後ブラウザで http://localhost:8080 が開く
+
+# ── iOS ───────────────────────────────────
+#   iosApp/ ディレクトリを Xcode で開き、Run（▶）で実行
+open iosApp/iosApp.xcodeproj
+
+# ── テスト ─────────────────────────────────
+./gradlew :shared:testAndroidHostTest        # Android（ホスト）テスト
+./gradlew :shared:wasmJsTest                  # Wasm テスト
+./gradlew :shared:jsTest                      # JS テスト
+./gradlew :shared:iosSimulatorArm64Test       # iOS シミュレータテスト
+
+# 困ったとき
+./gradlew clean                               # ビルド成果物を掃除
+./gradlew tasks                               # 実行可能なタスク一覧
+```
+
+> IDE から動かす場合は、ツールバーの Run ウィジェットにある実行構成をそのまま使えます。
+
+---
+
 * [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
   you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
 
